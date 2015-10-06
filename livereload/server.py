@@ -200,7 +200,7 @@ class Server(object):
 
         self.watcher.watch(filepath, func, delay)
 
-    def application(self, port, host, liveport=None, debug=None):
+    def application(self, port, host, liveport=None, debug=None, open_url=None):
         LiveReloadHandler.watcher = self.watcher
         if liveport is None:
             liveport = port
@@ -224,7 +224,7 @@ class Server(object):
             '</script>'
         ).format(port=liveport))
 
-        web_handlers = self.get_web_handlers(live_script)
+        web_handlers = self.get_web_handlers(live_script, open_url)
 
         class ConfiguredTransform(LiveScriptInjector):
             script = live_script
@@ -247,14 +247,14 @@ class Server(object):
             live = web.Application(handlers=live_handlers, debug=False)
             live.listen(liveport, address=host)
 
-    def get_web_handlers(self, script):
+    def get_web_handlers(self, script, open_url=None):
         if self.app:
             fallback = LiveScriptContainer(self.app, script)
             return [(r'.*', web.FallbackHandler, {'fallback': fallback})]
         return [
             (r'/(.*)', StaticFileHandler, {
                 'path': self.root or '.',
-                'default_filename': 'index.html',
+                'default_filename': open_url if open_url is not None else 'index.html',
             }),
         ]
 
@@ -278,7 +278,7 @@ class Server(object):
         self._setup_logging()
         logger.info('Serving on http://%s:%s' % (host, port))
 
-        self.application(port, host, liveport=liveport, debug=debug)
+        self.application(port, host, liveport=liveport, debug=debug, open_url=open_url)
 
         # Async open web browser after 5 sec timeout
         if open_url or open_url_delay:
