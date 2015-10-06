@@ -278,7 +278,7 @@ class Server(object):
         self._setup_logging()
         logger.info('Serving on http://%s:%s' % (host, port))
 
-        self.application(port, host, liveport=liveport, debug=debug, open_url)
+        self.application(port, host, liveport=liveport, debug=debug, open_url=open_url)
 
         # Async open web browser after open_url_delay (default=5) sec timeout
         if open_url or (open_url_delay is not None):
