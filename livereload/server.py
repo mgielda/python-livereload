@@ -259,7 +259,7 @@ class Server(object):
         ]
 
     def serve(self, port=5500, liveport=None, host=None, root=None, debug=None,
-              open_url=False, restart_delay=2, open_url_delay=None):
+              open_url=None, restart_delay=2, open_url_delay=None):
         """Start serve the server with the given port.
 
         :param port: serve on this port, default is 5500
